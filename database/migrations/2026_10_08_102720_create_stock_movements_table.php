@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained();
+            $table->enum('type', ['in', 'out']);
+            $table->integer('quantity');
+            $table->text('memo')->nullable();
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
