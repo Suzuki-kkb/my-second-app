@@ -17,6 +17,11 @@ class ProductController extends Controller
     // 一覧
     public function index()
     {
+        /**
+         * with('category') はカテゴリを事前に取得します（Eager Loading）。これがないと、商品ごとにカテゴリ取得のSQLが走るN+1問題が起きます。
+         * latest() は新しい順に並べます。
+         * paginate(10) は10件ごとにページ分割します。
+         */
         $products = Product::with('category')->latest()->paginate(10);
         return view('products.index', compact('products'));
     }
@@ -46,7 +51,7 @@ class ProductController extends Controller
 
         Product::create($data);
 
-        return redirect()->route('products.index')->with('success', '登録しました');
+        return redirect()->route('products.index')->with('success', '登録しました'); //with('success', ...) はフラッシュメッセージです。
     }
 
     /**
@@ -94,7 +99,7 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return redirect()->route('products.show', $product)->with('success', '更新しました');
+        return redirect()->route('products.show', $product)->with('success', '更新しました'); //with('success', ...) はフラッシュメッセージです。
     }
 
     /**
@@ -110,6 +115,6 @@ class ProductController extends Controller
         }
         $product->delete();
 
-        return redirect()->route('products.index')->with('success', '削除しました');
+        return redirect()->route('products.index')->with('success', '削除しました'); //with('success', ...) はフラッシュメッセージです。
     }
 }
