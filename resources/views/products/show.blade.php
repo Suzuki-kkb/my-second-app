@@ -1,5 +1,7 @@
 <h1>商品詳細</h1>
-
+@if (session('success'))
+    <p style="color: green;">{{ session('success') }}</p>
+@endif
 <dl>
     <dt>ID</dt>
     <dd>{{ $product->id }}</dd>
@@ -28,5 +30,5 @@
         @endif
     </dd>
 </dl>
-
+<a href="{{ route('products.edit', $product) }}">編集</a>
 <a href="{{ route('products.index') }}">一覧へ戻る</a>

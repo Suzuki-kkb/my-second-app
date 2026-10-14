@@ -28,11 +28,7 @@ class ProductRequest extends FormRequest
         return [
             'category_id' => ['required', 'integer', 'exists:categories,id'],
         'name'        => ['required', 'string', 'max:255'],
-        'sku'         => ['required', 'string', 'max:50', 'unique:products,sku'],
-        'price'       => ['required', 'integer', 'min:0'],
-        'stock_quantity' => ['required', 'integer', 'min:0'],
-        'image'       => ['nullable', 'image', 'max:2048'],
-        'sku' => [
+        'sku'         => [
             'required', 'string', 'max:50',
             Rule::unique('products', 'sku')->ignore($product?->id), //「null ならそのまま null」という書き方です。登録時はエラーにならず、何も除外されません。
             ],
