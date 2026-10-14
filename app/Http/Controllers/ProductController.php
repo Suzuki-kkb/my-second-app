@@ -110,11 +110,8 @@ class ProductController extends Controller
     // 削除
     public function destroy(Product $product)
     {
-        if ($product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
-        }
-        $product->delete();
+    $product->delete(); // 論理削除。画像は残す
 
-        return redirect()->route('products.index')->with('success', '削除しました'); //with('success', ...) はフラッシュメッセージです。
+    return redirect()->route('products.index')->with('success', '削除しました'); //with('success', ...) はフラッシュメッセージです。
     }
-}
+}    

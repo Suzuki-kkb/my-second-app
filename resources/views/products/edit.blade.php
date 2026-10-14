@@ -1,5 +1,9 @@
-<h1>商品編集</h1>
+@extends('layouts.app')
 
+@section('title', '商品編集')
+
+@section('content')
+<h1>商品編集</h1>
 <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -55,3 +59,4 @@
     <button type="submit">更新する</button>
     <a href="{{ route('products.show', $product) }}">戻る</a>
 </form>
+@endsection

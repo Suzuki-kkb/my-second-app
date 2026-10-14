@@ -1,3 +1,8 @@
+@extends('layouts.app')
+
+@section('title', '商品登録')
+
+@section('content')
 <h1>商品登録</h1>
 
 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
@@ -49,3 +54,4 @@
     <button type="submit">登録する</button>
     <a href="{{ route('products.index') }}">戻る</a>
 </form>
+@endsection
