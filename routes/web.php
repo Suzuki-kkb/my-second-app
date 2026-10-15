@@ -9,6 +9,3 @@ Route::get('/', function () {
 
 Route::resource('products', ProductController::class);
 
-Route::middleware('auth')->group(function () {
-    Route::resource('products', ProductController::class);
-});
