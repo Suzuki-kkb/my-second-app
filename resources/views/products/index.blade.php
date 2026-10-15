@@ -4,6 +4,7 @@
 
 @section('content')
 <h1>商品一覧</h1>
+<a href="{{ route('products.create') }}">新規登録</a>
 @if (session('success'))
     <p style="color: green;">{{ session('success') }}</p>
 @endif
