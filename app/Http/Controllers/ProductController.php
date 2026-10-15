@@ -64,7 +64,12 @@ class ProductController extends Controller
     // 詳細
     public function show(Product $product)
     {
-        return view('products.show', compact('product'));
+        $movements = $product->stockMovements()
+            ->with('user')
+            ->latest()
+            ->paginate(10);
+
+        return view('products.show', compact('product', 'movements'));
     }
 
     /**

@@ -4,9 +4,7 @@
 
 @section('content')
 <h1>商品詳細</h1>
-@if (session('success'))
-    <p style="color: green;">{{ session('success') }}</p>
-@endif
+
 <dl>
     <dt>ID</dt>
     <dd>{{ $product->id }}</dd>
@@ -37,5 +35,40 @@
 </dl>
 <a href="{{ route('products.edit', $product) }}">編集</a>
 <a href="{{ route('products.index') }}">一覧へ戻る</a>
+
+<p>
+    <a href="{{ route('products.stock.create', $product) }}">在庫調整（入庫・出庫）</a>
+</p>
+
+<h2>入出庫履歴</h2>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>日時</th>
+            <th>種別</th>
+            <th>数量</th>
+            <th>備考</th>
+            <th>担当者</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($movements as $movement)
+            <tr>
+                <td>{{ $movement->created_at->format('Y-m-d H:i') }}</td>
+                <td>{{ $movement->type === 'in' ? '入庫' : '出庫' }}</td>
+                <td>{{ $movement->quantity }}</td>
+                <td>{{ $movement->memo }}</td>
+                <td>{{ $movement->user->name }}</td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5">履歴はまだありません</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
+{{ $movements->links() }}
 
 @endsection
