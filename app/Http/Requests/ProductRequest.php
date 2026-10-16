@@ -43,4 +43,16 @@ class ProductRequest extends FormRequest
 
         return $rules;
     }
+
+     public function attributes(): array
+    {
+        return [
+            'category_id'    => 'カテゴリ',
+            'name'           => '商品名',
+            'sku'            => '商品コード',
+            'price'          => '単価',
+            'stock_quantity' => '在庫数',
+            'image'          => '商品画像',
+        ];
+    }
 }

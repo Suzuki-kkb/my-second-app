@@ -13,7 +13,9 @@ class ProductController extends Controller
 {
     // 在庫少数とみなす基準（この数以下）
     private const LOW_STOCK_THRESHOLD = 10;
-    
+     // 並び替えを許可する列（これ以外は無視する）
+    private const SORTABLE_COLUMNS = ['id', 'name', 'price', 'stock_quantity'];
+
     /**
      * Display a listing of the resource.
      */
@@ -26,29 +28,32 @@ class ProductController extends Controller
     // 一覧
     public function index(Request $request)
     {
+        // 許可した列以外が指定されたら id にする
+        $sort = in_array($request->sort, self::SORTABLE_COLUMNS, true) ? $request->sort : 'id';
+        $direction = $request->direction === 'asc' ? 'asc' : 'desc';
+
         $products = Product::with('category')
-            // 商品名の部分一致
             ->when($request->filled('keyword'), function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->keyword . '%');
             })
-            // カテゴリの絞り込み
             ->when($request->filled('category_id'), function ($query) use ($request) {
                 $query->where('category_id', $request->category_id);
             })
-            // 在庫少数のみ
             ->when($request->boolean('low_stock'), function ($query) {
                 $query->where('stock_quantity', '<=', self::LOW_STOCK_THRESHOLD);
             })
-            ->latest()
+            ->orderBy($sort, $direction)
             ->paginate(10)
             ->withQueryString();
 
         $categories = Category::orderBy('name')->get();
 
         return view('products.index', [
-            'products'          => $products,
-            'categories'        => $categories,
-            'lowStockThreshold' => self::LOW_STOCK_THRESHOLD,
+                        'products'          => $products,
+                        'categories'        => $categories,
+                        'lowStockThreshold' => self::LOW_STOCK_THRESHOLD,
+                        'sort'              => $sort,
+                        'direction'         => $direction,
         ]);
     }
     /**

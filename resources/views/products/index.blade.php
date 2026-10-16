@@ -27,15 +27,30 @@
 
     <button type="submit">検索</button>
     <a href="{{ route('products.index') }}">リセット</a>
+    <input type="hidden" name="sort" value="{{ $sort }}">
+<input type="hidden" name="direction" value="{{ $direction }}">
 </form>
+@php
+    // 列見出しのリンクを作る。同じ列をもう一度押すと昇順・降順が入れ替わる
+    $sortUrl = function (string $column) use ($sort, $direction) {
+        $next = ($sort === $column && $direction === 'asc') ? 'desc' : 'asc';
+
+        return route('products.index', array_merge(request()->query(), [
+            'sort'      => $column,
+            'direction' => $next,
+            'page'      => null, // 並び替えたら1ページ目に戻す
+        ]));
+    };
+    $arrow = fn (string $column) => $sort === $column ? ($direction === 'asc' ? ' ▲' : ' ▼') : '';
+@endphp
 <table border="1">
     <thead>
         <tr>
-            <th>ID</th>
-            <th>商品名</th>
+            <th><a href="{{ $sortUrl('id') }}">ID{{ $arrow('id') }}</a></th>
+            <th><a href="{{ $sortUrl('name') }}">商品名{{ $arrow('name') }}</a></th>
             <th>カテゴリ</th>
-            <th>価格</th>
-            <th>在庫数</th>
+            <th><a href="{{ $sortUrl('price') }}">価格{{ $arrow('price') }}</a></th>
+            <th><a href="{{ $sortUrl('stock_quantity') }}">在庫数{{ $arrow('stock_quantity') }}</a></th>
             <th>操作</th>
         </tr>
     </thead>
