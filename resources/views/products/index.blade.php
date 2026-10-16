@@ -6,7 +6,28 @@
 <h1>商品一覧</h1>
 
 <a href="{{ route('products.create') }}">新規登録</a>
+<form action="{{ route('products.index') }}" method="GET">
+    <label for="keyword">商品名</label>
+    <input type="text" name="keyword" id="keyword" value="{{ request('keyword') }}">
 
+    <label for="category_id">カテゴリ</label>
+    <select name="category_id" id="category_id">
+        <option value="">すべて</option>
+        @foreach ($categories as $category)
+            <option value="{{ $category->id }}" @selected(request('category_id') == $category->id)>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+
+    <label>
+        <input type="checkbox" name="low_stock" value="1" @checked(request()->boolean('low_stock'))>
+        在庫少数のみ（{{ $lowStockThreshold }}以下）
+    </label>
+
+    <button type="submit">検索</button>
+    <a href="{{ route('products.index') }}">リセット</a>
+</form>
 <table border="1">
     <thead>
         <tr>
@@ -19,7 +40,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($products as $product)
+        @forelse ($products as $product)
             <tr>
                 <td>{{ $product->id }}</td>
                 <td>{{ $product->name }}</td>
@@ -39,7 +60,11 @@
                     </form>
                 </td>
             </tr>
-        @endforeach
+                @empty
+            <tr>
+                <td colspan="6">該当する商品がありません</td>
+            </tr>
+        @endforelse
     </tbody>
 </table>
 

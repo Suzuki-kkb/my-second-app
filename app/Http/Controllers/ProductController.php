@@ -11,21 +11,46 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    // 在庫少数とみなす基準（この数以下）
+    private const LOW_STOCK_THRESHOLD = 10;
+    
     /**
      * Display a listing of the resource.
      */
+   /**
+     * with('category') はカテゴリを事前に取得します（Eager Loading）。これがないと、商品ごとにカテゴリ取得のSQLが走るN+1問題が起きます。
+     * when() は、条件が true のときだけ絞り込みを追加します。
+     * latest() は新しい順に並べます。
+     * paginate(10) は10件ごとにページ分割し、withQueryString() で検索条件をページ送りに引き継ぎます。
+     */
     // 一覧
-    public function index()
+    public function index(Request $request)
     {
-        /**
-         * with('category') はカテゴリを事前に取得します（Eager Loading）。これがないと、商品ごとにカテゴリ取得のSQLが走るN+1問題が起きます。
-         * latest() は新しい順に並べます。
-         * paginate(10) は10件ごとにページ分割します。
-         */
-        $products = Product::with('category')->latest()->paginate(10);
-        return view('products.index', compact('products'));
-    }
+        $products = Product::with('category')
+            // 商品名の部分一致
+            ->when($request->filled('keyword'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->keyword . '%');
+            })
+            // カテゴリの絞り込み
+            ->when($request->filled('category_id'), function ($query) use ($request) {
+                $query->where('category_id', $request->category_id);
+            })
+            // 在庫少数のみ
+            ->when($request->boolean('low_stock'), function ($query) {
+                $query->where('stock_quantity', '<=', self::LOW_STOCK_THRESHOLD);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
+        $categories = Category::orderBy('name')->get();
+
+        return view('products.index', [
+            'products'          => $products,
+            'categories'        => $categories,
+            'lowStockThreshold' => self::LOW_STOCK_THRESHOLD,
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
