@@ -28,8 +28,10 @@ Route::middleware('auth')->group(function () {
     // 管理者のみ
     Route::middleware('can:admin')->group(function () {
         Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-        Route::resource('categories', CategoryController::class);
+        Route::resource('categories', CategoryController::class)->except(['create', 'show']);
     });
 });
+
+
 
 require __DIR__.'/auth.php';
