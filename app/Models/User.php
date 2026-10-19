@@ -51,4 +51,8 @@ class User extends Authenticatable
     {
     return $this->hasMany(StockMovement::class);
     }
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
 }

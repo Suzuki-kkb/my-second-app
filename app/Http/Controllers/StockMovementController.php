@@ -34,7 +34,7 @@ class StockMovementController extends Controller
 
             StockMovement::create([
                 'product_id' => $product->id,
-                'user_id'    => 1, // 仮ユーザー。Week 4 で auth()->id() に差し替える
+                'user_id'    => auth()->id(),
                 'type'       => $data['type'],
                 'quantity'   => $data['quantity'],
                 'memo'       => $data['memo'] ?? null,
